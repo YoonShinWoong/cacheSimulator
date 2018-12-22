@@ -299,12 +299,20 @@ int main(int ac, char * av[]) {
 	// 출력 처리
 	printf("*L1 Cache Contents\n");
 	for (int i = 0; i < cache_index_size; i++) {
-		printf("%d: ", i);
+		if(i %set == 0){		
+			printf("%d: ", i/set);
+			// 1이 아닐때만 줄바꿈	
+			if(set != 1)
+				printf("\n");
+		}
+
+		// set 단위 출력
 		// block 부터만 출력
 		for (int j = 2; j < (L1_line_size/4) + 2; j++) {
 			printf("%08x ", cache[i][j]);
 		}
 		printf("\n");
+		
 	}
 	finishtime = clock(); // clcok
 	printf("\nTotal program run time: %0.1f seconds \n",(float)(finishtime-starttime)/(CLOCKS_PER_SEC));
@@ -358,7 +366,6 @@ void cache_to_mem(int byte_address, int cache_index, int cache_index_size, int c
 // set 내에 empty 공간 있다(miss) -> reuturn -1 , set이 전부 다 찼다(miss) -> return -2 
 int set_cache_index(int * target_cache_index, int set, int byte_address, int cache_index, int cache_tag){
 	int start_cache_index = cache_index - (cache_index % set); // set 시작 위치
-	int check=-2;
 	int i;
 	// set 동안 반복
 	for(i = 0; i<set;i++){
